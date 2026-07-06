@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <title>SIR Monitor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="login">
+    <h2>जालना SIR मॉनिटर</h2>
+    <input id="username" placeholder="युजरनेम (बूथ क्र. / सेक्टर / तालुका कोड)">
+    <input id="pin" placeholder="पिन" type="password">
+    <button onclick="doLogin()">लॉगिन</button>
+    <p id="loginError" class="error"></p>
+  </div>
+
+  <!-- BLO VIEW -->
+  <div id="bloView" class="hidden">
+    <h3>आजची प्रगती नोंदवा</h3>
+    <label>आज किती EF फॉर्म वाटले (Distributed)?</label>
+    <input id="efDistributed" type="number" placeholder="उदा. 25">
+    <label>आज किती EF फॉर्म डिजिटाइझ/जमा झाले?</label>
+    <input id="efDigitized" type="number" placeholder="उदा. 18">
+    <label>काही अडचण असल्यास लिहा (नसल्यास रिकामे ठेवा)</label>
+    <textarea id="issueText" placeholder="उदा. प्रिंटर बंद आहे"></textarea>
+    <button onclick="toggleRecording()" id="recBtn">🎙️ आवाज रेकॉर्ड करा (ऐच्छिक)</button>
+    <button onclick="submitEntry()">सबमिट करा</button>
+    <p id="bloResult" class="result"></p>
+  </div>
+
+  <!-- SECTOR OFFICER VIEW -->
+  <div id="sectorView" class="hidden">
+    <h3>सेक्टर स्थिती</h3>
+    <div id="sectorStats" class="stats"></div>
+    <table id="sectorTable">
+      <thead><tr><th>नाव</th><th>बूथ</th><th>स्थिती</th><th>वाटले</th><th>डिजिटाइझ</th><th></th></tr></thead>
+      <tbody id="sectorTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- TALUKA / ARO VIEW -->
+  <div id="talukaView" class="hidden">
+    <h3>तालुका डॅशबोर्ड</h3>
+    <div id="talukaStats" class="stats"></div>
+    <table id="talukaTable">
+      <thead><tr><th>सेक्टर</th><th>एकूण</th><th>प्रतिसाद</th><th>🚩 फ्लॅग</th></tr></thead>
+      <tbody id="talukaTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- COLLECTOR VIEW -->
+  <div id="collectorView" class="hidden">
+    <h3>जिल्हा डॅशबोर्ड</h3>
+    <div id="districtStats" class="stats"></div>
+    <table id="districtTable">
+      <thead><tr><th>तालुका</th><th>एकूण</th><th>प्रतिसाद</th><th>🚩 फ्लॅग</th></tr></thead>
+      <tbody id="districtTableBody"></tbody>
+    </table>
+  </div>
+
+  <button id="logoutBtn" class="hidden" onclick="doLogout()">लॉगआउट</button>
+
+  <script src="app.js"></script>
+</body>
+</html>
