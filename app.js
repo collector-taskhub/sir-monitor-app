@@ -1,19 +1,43 @@
 // ===== Already set to your confirmed Web App URL =====
-const API_URL = 'https://script.google.com/macros/s/AKfycbzgUpqhheiiYlvKp_kqgl6Nl8lRmSXFKdVeEeq0A8CpJWq8svGnaHfwEpP0j0-Kb65g/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxO_uCJr4Zzl6i53Z0iypfdBd6-pJ9aVfezOk03u4EmgwAUcTeix-0sbhGH99GCij2D/exec';
 
-let mediaRecorder, audioChunks = [], recordedBase64 = null;
+let jsonpCounter = 0;
 
-async function callApi(payload) {
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight with Apps Script
-      body: JSON.stringify(payload),
-    });
-    return await res.json();
-  } catch (err) {
-    return { ok: false, error: 'नेटवर्क त्रुटी: ' + err.message };
-  }
+function callApi(payload) {
+  return new Promise((resolve) => {
+    const callbackName = 'sirCallback' + (jsonpCounter++);
+    const qs = Object.entries(payload)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+      .join('&');
+
+    window[callbackName] = (data) => {
+      resolve(data);
+      cleanup();
+    };
+
+    const script = document.createElement('script');
+    script.src = API_URL + '?' + qs + '&callback=' + callbackName;
+    script.onerror = () => {
+      resolve({ ok: false, error: 'नेटवर्क त्रुटी: बॅकएंडशी संपर्क होऊ शकला नाही' });
+      cleanup();
+    };
+
+    function cleanup() {
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    document.body.appendChild(script);
+
+    // Safety timeout in case neither onload nor onerror fires
+    setTimeout(() => {
+      if (window[callbackName]) {
+        resolve({ ok: false, error: 'नेटवर्क त्रुटी: प्रतिसाद वेळेत आला नाही' });
+        cleanup();
+      }
+    }, 15000);
+  });
 }
 
 function showView(role) {
@@ -73,37 +97,6 @@ async function submitEntry() {
     : '❌ ' + result.error;
 }
 
-// ----- Voice recording (optional, stored in-browser only for now) -----
-async function toggleRecording() {
-  const btn = document.getElementById('recBtn');
-  if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-      mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-      mediaRecorder.onstop = async () => {
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        recordedBase64 = await blobToBase64(blob);
-      };
-      mediaRecorder.start();
-      btn.textContent = '⏹️ थांबवा';
-    } catch (err) {
-      alert('मायक्रोफोन उपलब्ध नाही: ' + err.message);
-    }
-  } else {
-    mediaRecorder.stop();
-    btn.textContent = '✅ रेकॉर्ड झाले';
-  }
-}
-
-function blobToBase64(blob) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result.split(',')[1]);
-    reader.readAsDataURL(blob);
-  });
-}
 
 // ----- Sector Officer view -----
 async function loadSectorView() {
