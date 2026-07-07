@@ -40,3 +40,7 @@ table { width: 100%; border-collapse: collapse; background: white; border-radius
 th, td { padding: 8px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
 th { background: #0B2545; color: white; }
 tr.flagged { background: #FEF2F2; }
+tr.congrats { background: #ECFDF5; }
+.pct-great { color: #047857; font-weight: bold; }
+.pct-ok { color: #B45309; font-weight: bold; }
+.pct-low { color: #B91C1C; font-weight: bold; }
