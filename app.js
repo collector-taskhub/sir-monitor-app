@@ -78,17 +78,19 @@ function doLogout() {
 async function submitEntry() {
   const token = localStorage.getItem('sir_token');
   const efDistributed = document.getElementById('efDistributed').value;
+  const efCollected = document.getElementById('efCollected').value;
   const efDigitized = document.getElementById('efDigitized').value;
   const issueText = document.getElementById('issueText').value.trim();
 
-  if (!efDistributed || !efDigitized) {
-    document.getElementById('bloResult').textContent = 'कृपया दोन्ही संख्या भरा.';
+  if (!efDistributed || !efCollected || !efDigitized) {
+    document.getElementById('bloResult').textContent = 'कृपया तिन्ही संख्या भरा.';
     return;
   }
 
   const result = await callApi({
     action: 'submitEntry', token,
     efDistributed: Number(efDistributed),
+    efCollected: Number(efCollected),
     efDigitized: Number(efDigitized),
     issueText: issueText,
   });
@@ -97,6 +99,12 @@ async function submitEntry() {
     : '❌ ' + result.error;
 }
 
+function percentClass(p) {
+  if (p === null || p === undefined) return '';
+  if (p >= 90) return 'pct-great';
+  if (p >= 50) return 'pct-ok';
+  return 'pct-low';
+}
 
 // ----- Sector Officer view -----
 async function loadSectorView() {
@@ -111,10 +119,12 @@ async function loadSectorView() {
     `<span>एकूण: ${total}</span> <span>प्रतिसाद: ${responded}</span> <span>🚩 फ्लॅग: ${flagged}</span>`;
 
   document.getElementById('sectorTableBody').innerHTML = result.rows.map((r) => `
-    <tr class="${r.flag ? 'flagged' : ''}">
+    <tr class="${r.flag ? 'flagged' : ''} ${r.overallPercent >= 90 ? 'congrats' : ''}">
       <td>${r.name}</td><td>${r.booth}</td>
       <td>${r.responded ? '✅' : '⏳'}</td>
-      <td>${r.efDistributed ?? '-'}</td><td>${r.efDigitized ?? '-'}</td>
+      <td>${r.efDistributed ?? '-'}</td><td>${r.efCollected ?? '-'}</td><td>${r.efDigitized ?? '-'}</td>
+      <td class="${percentClass(r.dailyPercent)}">${r.dailyPercent != null ? r.dailyPercent + '%' : '-'}</td>
+      <td class="${percentClass(r.overallPercent)}">${r.overallPercent != null ? r.overallPercent + '%' : '-'}</td>
       <td>${r.flag ? '🚩' : ''}</td>
     </tr>`).join('');
 }
@@ -129,8 +139,11 @@ async function loadTalukaView() {
     `<span>एकूण: ${result.total}</span> <span>प्रतिसाद: ${result.responded}</span>`;
 
   const rows = Object.entries(result.sectorMap).map(([sector, s]) => `
-    <tr class="${s.flagged > 0 ? 'flagged' : ''}">
-      <td>${sector}</td><td>${s.total}</td><td>${s.responded}</td><td>${s.flagged}</td>
+    <tr class="${s.flagged > 0 ? 'flagged' : ''} ${s.overallPercent >= 90 ? 'congrats' : ''}">
+      <td>${sector}</td><td>${s.total}</td><td>${s.responded}</td>
+      <td class="${percentClass(s.avgDailyPercent)}">${s.avgDailyPercent}%</td>
+      <td class="${percentClass(s.overallPercent)}">${s.overallPercent}%</td>
+      <td>${s.flagged}</td>
     </tr>`).join('');
   document.getElementById('talukaTableBody').innerHTML = rows;
 }
@@ -146,8 +159,11 @@ async function loadDistrictView() {
     `<span>प्रलंबित: ${result.pending}</span> <span>🚩 फ्लॅग: ${result.flagged}</span>`;
 
   const rows = Object.entries(result.talukaMap).map(([taluka, t]) => `
-    <tr class="${t.flagged > 0 ? 'flagged' : ''}">
-      <td>${taluka}</td><td>${t.total}</td><td>${t.responded}</td><td>${t.flagged}</td>
+    <tr class="${t.flagged > 0 ? 'flagged' : ''} ${t.overallPercent >= 90 ? 'congrats' : ''}">
+      <td>${taluka}</td><td>${t.total}</td><td>${t.responded}</td>
+      <td class="${percentClass(t.avgDailyPercent)}">${t.avgDailyPercent}%</td>
+      <td class="${percentClass(t.overallPercent)}">${t.overallPercent}%</td>
+      <td>${t.flagged}</td>
     </tr>`).join('');
   document.getElementById('districtTableBody').innerHTML = rows;
 }
