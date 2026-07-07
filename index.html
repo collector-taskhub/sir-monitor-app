@@ -21,9 +21,11 @@
   <div id="bloView" class="hidden">
     <h3>आजची प्रगती नोंदवा</h3>
     <label>आज किती EF फॉर्म वाटले (Distributed)?</label>
-    <input id="efDistributed" type="number" placeholder="उदा. 25">
+    <input id="efDistributed" type="number" placeholder="उदा. 100">
+    <label>आज किती EF फॉर्म गोळा झाले (Collected)?</label>
+    <input id="efCollected" type="number" placeholder="उदा. 90">
     <label>आज किती EF फॉर्म डिजिटाइझ/जमा झाले?</label>
-    <input id="efDigitized" type="number" placeholder="उदा. 18">
+    <input id="efDigitized" type="number" placeholder="उदा. 85">
     <label>काही अडचण असल्यास लिहा (नसल्यास रिकामे ठेवा)</label>
     <textarea id="issueText" placeholder="उदा. प्रिंटर बंद आहे"></textarea>
     <button onclick="submitEntry()">सबमिट करा</button>
@@ -35,7 +37,7 @@
     <h3>सेक्टर स्थिती</h3>
     <div id="sectorStats" class="stats"></div>
     <table id="sectorTable">
-      <thead><tr><th>नाव</th><th>बूथ</th><th>स्थिती</th><th>वाटले</th><th>डिजिटाइझ</th><th></th></tr></thead>
+      <thead><tr><th>नाव</th><th>बूथ</th><th>स्थिती</th><th>वाटले</th><th>गोळा</th><th>डिजिटाइझ</th><th>आजचे%</th><th>एकूण%</th><th></th></tr></thead>
       <tbody id="sectorTableBody"></tbody>
     </table>
   </div>
@@ -45,7 +47,7 @@
     <h3>तालुका डॅशबोर्ड</h3>
     <div id="talukaStats" class="stats"></div>
     <table id="talukaTable">
-      <thead><tr><th>सेक्टर</th><th>एकूण</th><th>प्रतिसाद</th><th>🚩 फ्लॅग</th></tr></thead>
+      <thead><tr><th>सेक्टर</th><th>एकूण</th><th>प्रतिसाद</th><th>सरासरी आजचे%</th><th>एकूण%</th><th>🚩 फ्लॅग</th></tr></thead>
       <tbody id="talukaTableBody"></tbody>
     </table>
   </div>
@@ -55,7 +57,7 @@
     <h3>जिल्हा डॅशबोर्ड</h3>
     <div id="districtStats" class="stats"></div>
     <table id="districtTable">
-      <thead><tr><th>तालुका</th><th>एकूण</th><th>प्रतिसाद</th><th>🚩 फ्लॅग</th></tr></thead>
+      <thead><tr><th>तालुका</th><th>एकूण</th><th>प्रतिसाद</th><th>सरासरी आजचे%</th><th>एकूण%</th><th>🚩 फ्लॅग</th></tr></thead>
       <tbody id="districtTableBody"></tbody>
     </table>
   </div>
