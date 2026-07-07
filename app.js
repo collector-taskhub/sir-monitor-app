@@ -1,5 +1,5 @@
 // ===== Already set to your confirmed Web App URL =====
-const API_URL = 'https://script.google.com/macros/s/AKfycbzgUpqhheiiYlvKp_kqgl6Nl8lRmSXFKdVeEeq0A8CpJWq8sVGnaHfwEpP0j0-Kb65g/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzgUpqhheiiYlvKp_kqgl6Nl8lRmSXFKdVeEeq0A8CpJWq8svGnaHfwEpP0j0-Kb65g/exec';
 
 let jsonpCounter = 0;
 
